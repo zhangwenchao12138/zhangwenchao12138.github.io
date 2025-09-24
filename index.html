@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非标针筒流速换算器 - 焦作市研航动力科技有限公司</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 650px;
+            overflow: hidden;
+        }
+        
+        .company-header {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .language-switcher {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 5px;
+        }
+        
+        .language-option {
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .language-option.active {
+            background: white;
+            color: #2575fc;
+            font-weight: 600;
+        }
+        
+        .company-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .company-tagline {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .calculator-content {
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2575fc;
+            font-weight: 600;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        input, select {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        .flow-rate-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .flow-rate-value {
+            flex: 2;
+        }
+        
+        .flow-rate-unit {
+            flex: 1;
+        }
+        
+        .unit {
+            color: #777;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+            color: #2575fc;
+        }
+        
+        .result-values {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .result-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6a11cb;
+            display: block;
+        }
+        
+        .result-unit {
+            font-size: 18px;
+            color: #555;
+        }
+        
+        .formula {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .formula h4 {
+            margin-bottom: 10px;
+            color: #2575fc;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .illustration {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .syringe-horizontal {
+            display: inline-block;
+            width: 180px;
+            height: 60px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            border-radius: 5px 30px 30px 5px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .syringe-horizontal:before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 10px;
+            width: 15px;
+            height: 40px;
+            background: #8a2be2;
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .syringe-horizontal:after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: #2575fc;
+            border-radius: 0 3px 3px 0;
+        }
+        
+        .dimensions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .dimension-line {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .dimension-line span {
+            margin: 0 10px;
+        }
+        
+        .dimension-line:before, .dimension-line:after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: #666;
+        }
+        
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+        
+        .calculation-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="company-header">
+            <div class="language-switcher">
+                <div class="language-option active" data-lang="zh">中文</div>
+                <div class="language-option" data-lang="en">English</div>
+            </div>
+            <div class="company-logo">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <div class="company-name" data-zh="焦作市研航动力科技有限公司" data-en="Jiaozuo Yanhang Power Technology Co., Ltd.">焦作市研航动力科技有限公司</div>
+            <div class="company-tagline" data-zh="专业动力解决方案提供商" data-en="Professional Power Solution Provider">专业动力解决方案提供商</div>
+        </div>
+        
+        <div class="calculator-content">
+            <h1 data-zh="非标针筒流速换算器" data-en="Non-Standard Syringe Flow Rate Converter">非标针筒流速换算器</h1>
+            
+            <div class="illustration">
+                <div class="syringe-horizontal"></div>
+                <div class="dimensions">
+                    <div class="dimension-line">
+                        <span data-zh="针筒内径 (D)" data-en="Syringe Inner Diameter (D)">针筒内径 (D)</span>
+                    </div>
+                    <div class="dimension-line">
+                        <span data-zh="推进距离 (L)" data-en="Plunger Travel (L)">推进距离 (L)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="description" data-zh="输入针筒的内径和流速，计算对应的推进速度" data-en="Enter the inner diameter and flow rate of the syringe to calculate the corresponding plunger speed">输入针筒的内径和流速，计算对应的推进速度</p>
+            
+            <div class="input-group">
+                <label for="diameter" data-zh="针筒内径" data-en="Syringe Inner Diameter">针筒内径 <span class="unit">(毫米 mm)</span></label>
+                <input type="number" id="diameter" placeholder="输入针筒内径，单位毫米" style="width: 100%;" data-zh-placeholder="输入针筒内径，单位毫米" data-en-placeholder="Enter syringe inner diameter in mm">
+                <div class="error" id="diameter-error" data-zh="请输入有效的针筒内径数值" data-en="Please enter a valid syringe inner diameter value">请输入有效的针筒内径数值</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="flow-rate" data-zh="流速" data-en="Flow Rate">流速</label>
+                <div class="flow-rate-container">
+                    <input type="number" id="flow-rate" placeholder="输入流速值" class="flow-rate-value" data-zh-placeholder="输入流速值" data-en-placeholder="Enter flow rate value">
+                    <select id="flow-rate-unit" class="flow-rate-unit">
+                        <option value="ml-per-min" data-zh="毫升/分钟 (ml/min)" data-en="ml/minute (ml/min)">毫升/分钟 (ml/min)</option>
+                        <option value="ml-per-hour" data-zh="毫升/小时 (ml/h)" data-en="ml/hour (ml/h)">毫升/小时 (ml/h)</option>
+                    </select>
+                </div>
+                <div class="error" id="flow-rate-error" data-zh="请输入有效的流速数值" data-en="Please enter a valid flow rate value">请输入有效的流速数值</div>
+            </div>
+            
+            <button id="calculate" data-zh="计算速度值" data-en="Calculate Speed Value">计算速度值</button>
+            
+            <div class="result" id="result">
+                <h3 data-zh="速度计算结果" data-en="Speed Calculation Result">速度计算结果</h3>
+                <div class="result-values">
+                    <div class="result-item">
+                        <span class="result-value" id="height-value-min">0</span>
+                        <span class="result-unit" data-zh="毫米/分钟 (mm/min)" data-en="mm/minute (mm/min)">毫米/分钟 (mm/min)</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value" id="height-value-hour">0</span>
+                        <span class="result-unit" data-zh="毫米/小时 (mm/h)" data-en="mm/hour (mm/h)">毫米/小时 (mm/h)</span>
+                    </div>
+                </div>
+                <div class="calculation-info" id="calculation-info"></div>
+            </div>
+            
+            <div class="formula">
+                <h4 data-zh="计算公式" data-en="Calculation Formula">计算公式</h4>
+                <p data-zh="推进速度 = 流速 ÷ [π × (针筒内径/2)²]" data-en="Plunger speed = Flow rate ÷ [π × (syringe inner diameter/2)²]">推进速度 = 流速 ÷ [π × (针筒内径/2)²]</p>
+                <p data-zh="说明：流速单位需要与推进速度单位保持一致的时间维度" data-en="Note: The time dimension of the flow rate unit must be consistent with the plunger speed unit">说明：流速单位需要与推进速度单位保持一致的时间维度</p>
+            </div>
+            
+            <footer>
+                <p data-zh="© 2023 焦作市研航动力科技有限公司 版权所有" data-en="© 2023 Jiaozuo Yanhang Power Technology Co., Ltd. All Rights Reserved">© 2023 焦作市研航动力科技有限公司 版权所有</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const diameterInput = document.getElementById('diameter');
+            const flowRateInput = document.getElementById('flow-rate');
+            const flowRateUnitSelect = document.getElementById('flow-rate-unit');
+            const calculateButton = document.getElementById('calculate');
+            const resultDiv = document.getElementById('result');
+            const heightValueMin = document.getElementById('height-value-min');
+            const heightValueHour = document.getElementById('height-value-hour');
+            const calculationInfo = document.getElementById('calculation-info');
+            const diameterError = document.getElementById('diameter-error');
+            const flowRateError = document.getElementById('flow-rate-error');
+            
+            // 语言切换功能
+            const languageOptions = document.querySelectorAll('.language-option');
+            let currentLanguage = 'zh'; // 默认中文
+            
+            // 切换语言函数
+            function switchLanguage(lang) {
+                currentLanguage = lang;
+                
+                // 更新语言选择按钮状态
+                languageOptions.forEach(option => {
+                    if (option.dataset.lang === lang) {
+                        option.classList.add('active');
+                    } else {
+                        option.classList.remove('active');
+                    }
+                });
+                
+                // 更新所有带有data-zh和data-en属性的元素
+                document.querySelectorAll('[data-zh]').forEach(element => {
+                    if (lang === 'zh') {
+                        element.textContent = element.dataset.zh;
+                    } else {
+                        element.textContent = element.dataset.en;
+                    }
+                });
+                
+                // 更新输入框placeholder
+                document.querySelectorAll('[data-zh-placeholder]').forEach(element => {
+                    if (lang === 'zh') {
+                        element.placeholder = element.dataset.zhPlaceholder;
+                    } else {
+                        element.placeholder = element.dataset.enPlaceholder;
+                    }
+                });
+                
+                // 更新下拉选项文本
+                document.querySelectorAll('option').forEach(option => {
+                    if (option.dataset.zh) {
+                        if (lang === 'zh') {
+                            option.textContent = option.dataset.zh;
+                        } else {
+                            option.textContent = option.dataset.en;
+                        }
+                    }
+                });
+                
+                // 如果已经显示结果，更新结果信息
+                if (resultDiv.style.display === 'block') {
+                    updateCalculationInfo();
+                }
+            }
+            
+            // 语言切换按钮事件
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    switchLanguage(this.dataset.lang);
+                });
+            });
+            
+            // 更新计算信息函数
+            function updateCalculationInfo() {
+                const diameter = parseFloat(diameterInput.value);
+                const flowRate = parseFloat(flowRateInput.value);
+                const flowRateUnit = flowRateUnitSelect.value;
+                
+                if (currentLanguage === 'zh') {
+                    calculationInfo.textContent = `计算基于：流速 ${flowRate} ${flowRateUnit === 'ml-per-min' ? 'ml/min' : 'ml/h'}，针筒内径 ${diameter} mm`;
+                } else {
+                    calculationInfo.textContent = `Calculation based on: Flow rate ${flowRate} ${flowRateUnit === 'ml-per-min' ? 'ml/min' : 'ml/h'}, Syringe inner diameter ${diameter} mm`;
+                }
+            }
+            
+            // 计算推进速度函数
+            function calculatePlungerSpeed() {
+                // 重置错误消息
+                diameterError.style.display = 'none';
+                flowRateError.style.display = 'none';
+                
+                // 获取输入值
+                const diameter = parseFloat(diameterInput.value);
+                const flowRate = parseFloat(flowRateInput.value);
+                const flowRateUnit = flowRateUnitSelect.value;
+                
+                // 验证输入
+                let isValid = true;
+                
+                if (isNaN(diameter) || diameter <= 0) {
+                    diameterError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isNaN(flowRate) || flowRate <= 0) {
+                    flowRateError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    resultDiv.style.display = 'none';
+                    return;
+                }
+                
+                // 计算推进速度
+                // 1. 将直径转换为半径（毫米）
+                const radius = diameter / 2;
+                
+                // 2. 计算针筒横截面积（平方毫米）
+                const area = Math.PI * Math.pow(radius, 2);
+                
+                // 3. 将流速转换为毫米/分钟
+                let flowRateMmPerMin;
+                if (flowRateUnit === 'ml-per-min') {
+                    // 1 ml/min = 1000 mm³/min
+                    flowRateMmPerMin = flowRate * 1000;
+                } else if (flowRateUnit === 'ml-per-hour') {
+                    // 1 ml/h = 1000 mm³/h = 1000/60 mm³/min
+                    flowRateMmPerMin = flowRate * 1000 / 60;
+                }
+                
+                // 4. 计算推进速度（毫米/分钟）
+                const plungerSpeedMmPerMin = flowRateMmPerMin / area;
+                
+                // 5. 计算推进速度（毫米/小时）
+                const plungerSpeedMmPerHour = plungerSpeedMmPerMin * 60;
+                
+                // 6. 显示结果（保留四位小数）
+                heightValueMin.textContent = plungerSpeedMmPerMin.toFixed(4);
+                heightValueHour.textContent = plungerSpeedMmPerHour.toFixed(4);
+                
+                // 7. 显示计算信息
+                updateCalculationInfo();
+                
+                // 8. 显示结果区域
+                resultDiv.style.display = 'block';
+            }
+            
+            // 添加计算按钮点击事件
+            calculateButton.addEventListener('click', calculatePlungerSpeed);
+            
+            // 添加输入框回车键支持
+            diameterInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculatePlungerSpeed();
+            });
+            
+            flowRateInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculatePlungerSpeed();
+            });
+        });
+    </script>
+</body>
+</html>
